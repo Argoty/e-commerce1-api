@@ -27,13 +27,16 @@ const getProductsInCart = async (req, res) => {
 
 const postProductInCart = async (req, res) => {
     try {
-        await client.connect();
         const {productId} = req.body;
         const productIdObj = new ObjectId(productId)
         const {userId} = req.params
         const userIdObj = new ObjectId(userId)
 
+        if (req.user._id.toString() !== userId) {
+            return res.status(404).json({"error": "USER DENNIED"})
+        }
 
+        await client.connect();
         const db = client.db("e-commerce_vue_express");
 
         // Comprueba si existe el producto
@@ -66,10 +69,15 @@ const postProductInCart = async (req, res) => {
 
 const deleteProductInCart = async (req, res) => {
     try {
-        await client.connect();
         const {userId, productId} = req.params
         const userIdObj = new ObjectId(userId)
+        
+        if (req.user._id.toString() !== userId) {
+            return res.status(404).json({"error": "USER DENNIED"})
+        }
 
+
+        await client.connect();
         const db = client.db("e-commerce_vue_express");
 
 

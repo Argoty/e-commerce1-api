@@ -7,13 +7,16 @@ const {
     deleteProductInCart
   } = require("../controllers/cart");
 
-router.get('/:userId',getProductsInCart);
+const {validatorGetCart, validatorProduct} = require("../validators/cart")
+const authMiddleware = require("../middleware/session")
+
+router.get('/:userId',validatorGetCart, getProductsInCart);
 
 // AGREGAR UN PRODUCTO AL CARRITO DE UN USUARIO
-router.post('/:userId', postProductInCart);
+router.post('/:userId', validatorGetCart, validatorProduct, authMiddleware, postProductInCart);
 
 
 // ELIMINAR UN PRODUCTO AL CARRITO DE UN USUARIO
-router.delete('/:userId/:productId', deleteProductInCart);
+router.delete('/:userId/:productId', validatorGetCart, validatorProduct, authMiddleware, deleteProductInCart);
 
 module.exports = router
