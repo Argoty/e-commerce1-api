@@ -9,6 +9,7 @@ const validatorRegister = [
     check("password").exists().notEmpty().isLength(
         {min: 3, max: 99}
     ),
+    check("email").exists().notEmpty().isEmail(),
     (req, res, next) => validateResults(req, res, next),
 ]
 
