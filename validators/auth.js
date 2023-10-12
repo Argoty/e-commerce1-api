@@ -5,7 +5,7 @@ const validatorRegister = [
     check("username").exists().notEmpty().isLength(
         {min: 3, max: 99}
     ),
-    check("age").exists().notEmpty().isNumeric(),
+    check("birthdate").exists().notEmpty(),
     check("password").exists().notEmpty().isLength(
         {min: 3, max: 99}
     ),
