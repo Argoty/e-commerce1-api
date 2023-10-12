@@ -62,7 +62,7 @@ const loginUser = async (req, res) => {
         user
       }
     
-      res.send({ data });
+      res.status(200).json(data)
       await client.close();
     } catch (err) {
         res.status(404).json({"error": "Error login"});
