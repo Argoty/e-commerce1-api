@@ -8,7 +8,7 @@ const tokenSign = async (userObj) => {
       role: userObj.role,
     },
     JWT_SECRET,
-    { expiresIn: "24h" }
+    { expiresIn: "3d" }
   );
 
   return sign

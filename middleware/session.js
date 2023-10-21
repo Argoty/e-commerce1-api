@@ -5,14 +5,14 @@ const {ObjectId} = require('mongodb')
 const authMiddleware = async (req, res, next) => {
     try {
         if (!req.headers.authorization){
-            res.status(401).send({error: "NOT TOKEN SESSION"})
+            return res.status(401).send({error: "NOT TOKEN SESSION"})
         }
 
         const token = req.headers.authorization.split(" ").pop(); // QUITA EL 'BEARER' DEL TOKEN
         const dataToken = await verifyToken(token)
 
         if (!dataToken) {
-            res.status(401).send({err: "NOT_PAYLOAD_DATA"})
+            return res.status(401).send({err: "NOT_PAYLOAD_DATA"})
         }
 
         await client.connect();
@@ -25,7 +25,7 @@ const authMiddleware = async (req, res, next) => {
         await client.close();
         next();
     } catch (err) {
-        res.status(401).send({"error": "NOT SESSION"})
+        return res.status(401).send({"error": "NOT SESSION"})
     }
 }
 

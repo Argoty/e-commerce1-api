@@ -10,7 +10,7 @@ const {
 const {validatorGetCart, validatorProduct} = require("../validators/cart")
 const authMiddleware = require("../middleware/session")
 
-router.get('/:userId',validatorGetCart, getProductsInCart);
+router.get('/:userId',validatorGetCart, authMiddleware, getProductsInCart);
 
 // AGREGAR UN PRODUCTO AL CARRITO DE UN USUARIO
 router.post('/:userId', validatorGetCart, validatorProduct, authMiddleware, postProductInCart);
