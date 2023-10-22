@@ -23,6 +23,7 @@ app.use("/images", express.static(path.join(__dirname + "/assets")))
 app.use('/products', require('./routes/products'));
 app.use('/cart', require('./routes/cart'));
 app.use('/auth', require('./routes/auth'));
+app.use('/payment', require('./routes/payment'));
 
 app.get("/", async (req, res) => { res.status(200).json({data: "This api is for my e-commerce"})})
 app.listen(port, () => console.log("server listening 8000..!!"))
