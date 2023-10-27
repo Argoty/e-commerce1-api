@@ -6,6 +6,7 @@ const validatorRegister = [
         {min: 3, max: 99}
     ),
     check("birthdate").exists().notEmpty(),
+    check("phone").exists().notEmpty(),
     check("password").exists().notEmpty().isLength(
         {min: 3, max: 99}
     ),

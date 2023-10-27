@@ -3,9 +3,9 @@ const Stripe = require("stripe")
 const stripe = Stripe(process.env.STRIPE_KEY)
 
 const checkout = async (req, res) => {
-    const {body} = req
+    const { products } = req.body
 
-    const line_items = body.map(el => ({
+    const line_items = products.map(el => ({
         price_data: {
           product_data: {
             name: el.name,
