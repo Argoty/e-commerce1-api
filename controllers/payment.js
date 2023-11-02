@@ -3,27 +3,24 @@ const Stripe = require("stripe")
 const stripe = Stripe(process.env.STRIPE_KEY)
 
 const checkout = async (req, res) => {
-    const { products } = req.body
+    const {products} = req.body
 
     const line_items = products.map(el => ({
         price_data: {
-          product_data: {
-            name: el.name,
-            description: el.description,
-            images: ["https://ec1-vuexpress.vercel.app" + el.imageUrl]
-          },
-          currency: "usd",
-          unit_amount: parseFloat(el.price) * 100,
+            product_data: {
+                name: el.name,
+                description: el.description,
+                images: [el.imageUrl]
+            },
+            currency: "COP", 
+            unit_amount: parseFloat(el.price) * 100,
         },
-        quantity: 1,
-      }));
+        quantity: 1
+    }));
 
-    const session = await stripe.checkout.sessions.create({
-        line_items,
-        mode: "payment",
-        success_url: "http://localhost:8080/success",
-        cancel_url: "http://localhost:8080/products"
-    })
+    console.log(line_items[0].price_data);
+
+    const session = await stripe.checkout.sessions.create({line_items, mode: "payment", success_url: "http://localhost:8080/success", cancel_url: "http://localhost:8080/products"})
 
     return res.status(200).json(session)
 }

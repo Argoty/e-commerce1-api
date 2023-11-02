@@ -45,7 +45,9 @@ const createProduct = async (req, res) => {
         const data_img = await uploadImage(req.files.image.data);
 
         body.averageRating = "5.0"
-        body.imageUrl = data_img.url
+        body.imageUrl = data_img.url;
+        body.createdAt = new Date();
+        body.updatedAt = body.createdAt
 
         await client.connect();
 
@@ -99,6 +101,7 @@ const updateProduct = async (req, res) => {
 
         body.averageRating = "5.0";
         body.imageUrl = data_img.url;
+        body.updatedAt = new Date();
 
         // Actualiza el producto en la base de datos utilizando el método 'findOneAndUpdate'
         await productsCollection.findOneAndUpdate({
