@@ -18,8 +18,6 @@ const checkout = async (req, res) => {
         quantity: 1
     }));
 
-    console.log(line_items[0].price_data);
-
     const session = await stripe.checkout.sessions.create({line_items, mode: "payment", success_url: "http://localhost:8080/success", cancel_url: "http://localhost:8080/products"})
 
     return res.status(200).json(session)
