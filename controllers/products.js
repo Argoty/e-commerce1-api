@@ -6,7 +6,7 @@ const getProducts = async (req, res) => {
     await client.connect();
 
     const db = client.db("e-commerce_vue_express");
-    const data = await db.collection("products").find({}).toArray();
+    const data = await db.collection("products").find({}).sort({"updatedAt": -1}).toArray();
 
 
     res.status(200).json(data);
@@ -42,9 +42,9 @@ const createProduct = async (req, res) => {
         }
 
         // ADDING IMAGE TO THE CLOUDINARY DB
-        const data_img = await uploadImage(req.files.image.data);
+        const data_img = await uploadImage(req.files.image.data, "products");
 
-        body.averageRating = "5.0"
+        body.averageRating = "Sin calificar"
         body.imageUrl = data_img.url;
         body.createdAt = new Date();
         body.updatedAt = body.createdAt
@@ -97,9 +97,8 @@ const updateProduct = async (req, res) => {
         await deleteImage(previousImageUrl);
 
         // ADICIÓN DE LA NUEVA IMAGEN A CLOUDINARY
-        const data_img = await uploadImage(req.files.image.data);
+        const data_img = await uploadImage(req.files.image.data, "products");
 
-        body.averageRating = "5.0";
         body.imageUrl = data_img.url;
         body.updatedAt = new Date();
 
@@ -141,6 +140,8 @@ const deleteProduct = async (req, res) => {
         const imageUrl = product.imageUrl
         await deleteImage(imageUrl);
 
+        // Elimina los ratings de este
+        await db.collection("rating").deleteMany({productId})
 
         res.status(204).json({
             data: "PRODUCT ELIMINATED CORRECTLY"

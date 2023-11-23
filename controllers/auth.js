@@ -15,7 +15,8 @@ const registerUser = async (req, res) => {
             ...body,
             password,
             cartItems: [],
-            role: ["user"]
+            role: ["user"],
+            createdAt: new Date()
         };
 
 

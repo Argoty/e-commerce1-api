@@ -11,4 +11,10 @@ const validatorProduct = [
     (req, res, next) => validateResults(req, res, next)
 ]
 
-module.exports = { validatorGetCart, validatorProduct }
+const validatorAddProduct = [
+    check("productId").exists().notEmpty().isMongoId(),
+    check("amount").exists().notEmpty().isNumeric(),
+    (req, res, next) => validateResults(req, res, next)
+]
+
+module.exports = { validatorGetCart, validatorProduct, validatorAddProduct }

@@ -29,26 +29,14 @@ app.use('/cart', require('./routes/cart'));
 app.use('/auth', require('./routes/auth'));
 app.use('/payment', require('./routes/payment'));
 app.use('/contact', require('./routes/contact'));
-
-
-// app.post('/upload', async (req, res) => {
-//     if (req.files ?. image) {
-//         try {
-//             const result = await uploadImage(req.files.image.data);
-//             return res.send(result);
-//         } catch (err) {
-//             console.log(err);
-//             return res.status(500).json({error: "Error al procesar la imagen"});
-//         }
-//     }
-
-
-// });
+app.use('/users', require('./routes/users'));
+app.use('/rating', require('./routes/rating'));
+app.use('/sections', require('./routes/sections'));
 
 app.get("/", async (req, res) => {
     res.status(200).json({data: "This api is for my e-commerce"})
 })
-app.listen(port, () => console.log("server listening 8000..!!"))
+app.listen(port, () => console.log("server listening " + port + "!"))
 
 
 // npm run dev

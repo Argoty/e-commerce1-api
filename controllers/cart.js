@@ -27,89 +27,113 @@ const getProductsInCart = async (req, res) => {
 
 const postProductInCart = async (req, res) => {
     try {
-        const {productId} = req.body;
-        const productIdObj = new ObjectId(productId)
-        const {userId} = req.params
-        const userIdObj = new ObjectId(userId)
+        const {productId, amount} = req.body;
+        const productIdObj = new ObjectId(productId);
+        const {userId} = req.params;
+        const userIdObj = new ObjectId(userId);
 
         if (req.user._id.toString() !== userId) {
-            return res.status(404).json({"error": "USER DENNIED"})
+            return res.status(404).json({"error": "USER DENIED"});
         }
 
         await client.connect();
         const db = client.db("e-commerce_vue_express");
 
         // Comprueba si existe el producto
-        const product = await db.collection("products").findOne({_id: productIdObj})
+        const product = await db.collection("products").findOne({_id: productIdObj});
 
         if (! product) {
             return res.status(404).json({"error": 'Could not find the product!'});
         }
 
-        // Agrega el nuevo producto en el usuario
-        await db.collection("users").updateOne({
-            _id: userIdObj
+        // Actualizar o agregar el nuevo producto en el usuario
+        const {modifiedCount} = await db.collection("users").updateOne({
+            _id: userIdObj,
+            "cartItems.productId": productId
         }, {
-            $addToSet: {
-                cartItems: productId
+            $set: {
+                "cartItems.$.amount": amount
             }
-        })
+        });
+
+        if (modifiedCount === 0) {
+            await db.collection("users").updateOne({
+                _id: userIdObj
+            }, {
+                $addToSet: {
+                    cartItems: {
+                        productId,
+                        amount
+                    }
+                }
+            });
+        }
 
         // Obtiene los productos del usuario
         const user = await db.collection("users").findOne({_id: userIdObj});
-
-        const cartItems = await obtenerProductosPorUsuario(db, user)
+        const cartItems = await obtenerProductosPorUsuario(db, user);
 
         res.status(200).json(cartItems);
         await client.close();
     } catch (err) {
         return res.status(404).json({"error": "Error adding a product to the cart"});
     }
-}
+};
 
 const deleteProductInCart = async (req, res) => {
     try {
-        const {userId, productId} = req.params
-        const userIdObj = new ObjectId(userId)
-        
-        if (req.user._id.toString() !== userId) {
-            return res.status(404).json({"error": "USER DENNIED"})
-        }
+        const {userId, productId} = req.params;
+        const userIdObj = new ObjectId(userId);
 
+        if (req.user._id.toString() !== userId) {
+            return res.status(404).json({"error": "USER DENIED"});
+        }
 
         await client.connect();
         const db = client.db("e-commerce_vue_express");
 
-
+        // Elimina el producto del usuario con el productId correspondiente
         await db.collection("users").updateOne({
             _id: userIdObj
         }, {
             $pull: {
-                cartItems: productId
+                cartItems: {
+                    productId
+                }
             }
-        })
+        });
 
         // Obtiene los productos del usuario
         const user = await db.collection("users").findOne({_id: userIdObj});
 
-        const cartItems = await obtenerProductosPorUsuario(db, user)
+        const cartItems = await obtenerProductosPorUsuario(db, user);
 
         res.status(200).json(cartItems);
         await client.close();
     } catch (err) {
         return res.status(404).json({"error": "Error deleting a product to the cart"});
     }
-
-
 }
+
 
 // Funcion para obtener los productos del usuario
-const obtenerProductosPorUsuario = async (db, user) => {
+const obtenerProductosPorUsuario = async (db, user) => { // Obtener todos los productos
     const products = await db.collection("products").find({}).toArray();
-    const cartItemsIds = user.cartItems;
-    const cartItems = products.filter(p => cartItemsIds.includes(p._id.toString()));
 
-    return cartItems
+    // Obtener los productos en el carrito del usuario
+    const cartItems = user.cartItems.map(item => {
+        const product = products.find(p => p._id.toString() === item.productId);
+        return {
+            ... product,
+            amount: item.amount
+        };
+    });
+
+    return cartItems;
+};
+
+module.exports = {
+    getProductsInCart,
+    postProductInCart,
+    deleteProductInCart
 }
-
-module.exports = {getProductsInCart, postProductInCart, deleteProductInCart}

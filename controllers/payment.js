@@ -15,7 +15,7 @@ const checkout = async (req, res) => {
             currency: "COP", 
             unit_amount: parseFloat(el.price) * 100,
         },
-        quantity: 1
+        quantity: el.amount
     }));
 
     const session = await stripe.checkout.sessions.create({line_items, mode: "payment", success_url: "http://localhost:8080/success", cancel_url: "http://localhost:8080/products"})

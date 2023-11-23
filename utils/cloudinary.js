@@ -3,11 +3,11 @@ import {v2 as cloudinary} from "cloudinary"
 
 cloudinary.config({cloud_name: process.env.CLOUDINARY_NAME, api_key: process.env.CLOUDINARY_KEY, api_secret: process.env.CLOUDINARY_SECRET, secure: true})
 
-const uploadImage = (imageBuffer) => {
+const uploadImage = (imageBuffer, subfolder) => {
     return new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream({
             resource_type: "image",
-            folder: "e-commerce1"
+            folder: `e-commerce1/${subfolder}`
         }, (error, result) => {
             if (error) {
 
