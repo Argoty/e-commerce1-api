@@ -61,10 +61,6 @@ const getRating = async (req, res) => {
     try {
         const {userId, productId} = req.params;
 
-        if (req.user._id.toString() !== userId) {
-            return res.status(404).json({"error": "USER DENIED"});
-        }
-
         await client.connect();
         const db = client.db("e-commerce_vue_express");
 
@@ -81,10 +77,6 @@ const getRating = async (req, res) => {
 const getUserRatings = async (req, res) => {
     try {
         const {userId} = req.params;
-
-        if (req.user._id.toString() !== userId) {
-            return res.status(404).json({"error": "USER DENIED"});
-        }
 
         await client.connect();
         const db = client.db("e-commerce_vue_express");
